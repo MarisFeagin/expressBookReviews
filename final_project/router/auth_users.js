@@ -1,33 +1,28 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
+const {body} = require("express/lib/request");
 const regd_users = express.Router();
 
 let users = [];
 
 const isValid = (username)=>{ //returns boolean
-  const { username, password } = req.body;
-  const user = users[username];
-
-  if (user) {
-    
-    if (user.username === username) {
-      res.status(200).send('Login successful');
-    } else {
-      res.status(401).send('Invalid Username');
-    }
-  } else {
-    res.status(404).send('User not found');
-  }
-}
-
-const authenticatedUser = (username,password)=>{ //returns boolean
-
   let userswithsameusername = users.filter((user) => {
     return user.username === username;
   });
 
   return userswithsameusername.length > 0;
+}
+
+const authenticatedUser = (username,password)=>{ //returns boolean
+  let validusers = users.filter((user) => {
+    return (user.username === username && user.password === password);
+  });
+  if (validusers.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //only registered users can login
@@ -56,8 +51,20 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const review = req.params.review;
+  let user = users[review];
+  if (user) {
+    let review  = req.body.reviews;
+
+    if (review) {
+      user["review"] = review;
+    }
+
+    users[review] = user;
+    res.send(`User with the review ${review} was updated.`);
+  } else {
+    res.send("Unable to review!");
+  }
 });
 
 module.exports.authenticated = regd_users;
