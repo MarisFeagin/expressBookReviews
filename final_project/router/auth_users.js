@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
-const {body} = require("express/lib/request");
+const { body } = require("express/lib/request");
 const regd_users = express.Router();
 
 let users = [];
@@ -29,7 +29,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 regd_users.post("/login", (req,res) => {
   const user = req.body.user;
   if (!user) {
-    return res.status(404).json({ message: "Body Empty" });
+    return res.status(404).json({ message: "Unable to find user" });
   }
   // Generate JWT access token
   let accessToken = jwt.sign({
@@ -57,6 +57,19 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     res.send(`User with the review ${review} was updated.`);
   } else {
     res.send("Unable to review!");
+  }
+});
+
+// delete book reviews
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const review = req.params.review;
+
+  if (review) {
+  users = users.filter((user) => user.review !== review);
+
+    res.send(`User with the review ${review} was deleted.`);
+  } else {
+    res.send("Unable to delete review!");
   }
 });
 
