@@ -74,4 +74,84 @@ public_users.get('/review/:isbn',function (req, res) {
   }
 });
 
+// Promise function versions //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+// get books list but in promise form
+let books = new Promise((resolve, reject) => {
+  res.send(JSON.stringify(books));
+})
+
+// console log before call book list
+console.log("before call book list");
+
+// Calling promise ISBN
+books.then((successMessage) => {
+  console.log("From Callback" + successMessage);
+})
+
+// Get book by ISBN but in promise form
+let booksByIsbn = new Promise((resolve, reject) => {
+  const isbn = req.params.id;
+  res.send(books[isbn]);
+})
+
+// console log before call ISBN
+console.log("before call ISBN");
+
+// Calling promise ISBN
+booksByIsbn.then((successMessage) => {
+  console.log("From Callback" + successMessage);
+})
+
+// Get book by Author but in promise form
+let booksByAuthor  = new Promise((resolve, reject) => {
+  const authorName = req.params.author;
+  const booksByAuthor = [];
+
+  for (const key in books) {
+    if (books[key].author.toLowerCase() === authorName.toLowerCase()) {
+      booksByAuthor.push(books[key]);
+    }
+  }
+
+  if (booksByAuthor.length > 0) {
+    res.json(booksByAuthor);
+  } else {
+    res.status(404).send('No books found by this author');
+  }
+})
+
+// console log before calling book via author
+console.log("before call book's author");
+
+// Calling promise booksByAuthor
+booksByAuthor.then((successMessage) => {
+  console.log("From Callback" + successMessage);
+})
+
+let booksByTitle = new Promise((resolve, reject) => {
+  const titleName = req.params.title;
+  const booksByTitle = [];
+
+  for (const key in books) {
+    if (books[key].title.toLowerCase() === titleName.toLowerCase()) {
+      booksByTitle.push(books[key]);
+    }
+  }
+
+  if (booksByTitle.length > 0) {
+    res.json(booksByTitle);
+  } else {
+    res.status(404).send('No books found by this title');
+  }
+})
+
+// console log before calling book via title
+console.log("before call book's title");
+
+// Calling promise booksByAuthor
+booksByTitle.then((successMessage) => {
+  console.log("From Callback" + successMessage);
+})
+
 module.exports.general = public_users;
